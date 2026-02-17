@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Goods.Windows"
         mc:Ignorable="d"
-        Title="ООО «Обувь»" Icon="/Resources/Icon.png" Height="800" Width="1500">
+        Title="ООО «Обувь»" Icon="/Resources/Icon.png" Height="800" Width="1960">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.25*"></RowDefinition>
@@ -27,118 +27,134 @@
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
 
-            <StackPanel Margin="10" Orientation="Horizontal"  Name="controlPanelGrid" Visibility="Hidden">
-                <Grid MinWidth="320" Margin="0 0 20 0">
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="28">Поиск</TextBlock>
-                    <TextBox Name="searchTextBox" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" MinWidth="230"></TextBox>
-                </Grid>
-                <Grid MinWidth="500" Margin="0 0 20 0">
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="28">Поле для сортировки</TextBlock>
-                    <ComboBox Name="columnForSortComboBox" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" MinWidth="230"></ComboBox>
-                </Grid>
-                <Grid MinWidth="430">
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="28">Сортировать по</TextBlock>
-                    <ComboBox Name="sortTypeComboBox" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" MinWidth="230"></ComboBox>
-                </Grid>
-            </StackPanel>
+            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden" Name="controlPanelScrollViewer">
+                <StackPanel Margin="10" Orientation="Horizontal" Name="controlPanelGrid" Visibility="Visible">
+                    <Grid MinWidth="320" Margin="0 0 20 0">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="28">Поиск</TextBlock>
+                        <TextBox TextChanged="searchTextBox_TextChanged" Name="searchTextBox" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" MinWidth="230"></TextBox>
+                    </Grid>
+                    <Grid MinWidth="460" Margin="0 0 20 0">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="28">Сортируемое поле</TextBlock>
+                        <ComboBox  SelectionChanged="columnForSortComboBox_SelectionChanged" Name="columnForSortComboBox" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" MinWidth="230">
+                            <ComboBoxItem Name="nameComboBoxItem">название</ComboBoxItem>
+                            <ComboBoxItem>цена</ComboBoxItem>
+                            <ComboBoxItem>поставщик</ComboBoxItem>
+                            <ComboBoxItem>производитель</ComboBoxItem>
+                            <ComboBoxItem>категория</ComboBoxItem>
+                            <ComboBoxItem>скидка</ComboBoxItem>
+                            <ComboBoxItem>количество</ComboBoxItem>
+                        </ComboBox>
+                    </Grid>
+                    <Grid MinWidth="430">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="28">Сортировать по</TextBlock>
+                        <ComboBox SelectionChanged="sortTypeComboBox_SelectionChanged"  Name="sortTypeComboBox" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="28" MinWidth="230">
+                            <ComboBoxItem Name="defaultSortTypeItem">возрастанию</ComboBoxItem>
+                            <ComboBoxItem>убыванию</ComboBoxItem>
+                        </ComboBox>
+                    </Grid>
+                    <Button VerticalAlignment="Center" FontSize="28" MinWidth="180" Margin="20 0 20 0" Click="Button_Click_1" Name="deleteButton">Удалить</Button>
+                    <Button VerticalAlignment="Center" FontSize="28" MinWidth="180" Margin="20 0 20 0" Click="Button_Click_2" Name="addButton">Добавить</Button>
+                    <Button VerticalAlignment="Center" FontSize="28" MinWidth="180" Margin="20 0 20 0" Click="Button_Click_3" Name="editButton">Редактировать</Button>
+                </StackPanel>
+            </ScrollViewer>
+            
 
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="GoodsItemsControl">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+            <ListView Grid.Row="1" x:Name="GoodsListView">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderThickness="2"
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="2"
                         BorderBrush="Black"
                         Margin="10"
-                        Padding="10">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="180"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="200"/>
-                                    </Grid.ColumnDefinitions>
+                        Padding="10"
+                        MinWidth="1200">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
 
-                                    <!-- Фото -->
-                                    <Border Grid.Column="0"
+                                <!-- Фото -->
+                                <Border Grid.Column="0"
                                 BorderThickness="1"
                                 BorderBrush="Black"
                                 Padding="5">
-                                        <Image Width="160"
+                                    <Image Width="160"
                                    Height="160"
                                    Stretch="Uniform"
                                    Source="{Binding ImagePath}"/>
-                                    </Border>
+                                </Border>
 
-                                    <!-- Информация -->
-                                    <StackPanel Grid.Column="1"
+                                <!-- Информация -->
+                                <StackPanel Grid.Column="1"
                                     Margin="15 0"
                                     >
-                                        <TextBlock FontSize="26"
+                                    <TextBlock FontSize="26"
                                        FontWeight="Bold">
                                 <Run Text="{Binding CategoryName}"/>
                                 <Run Text=" | "/>
                                 <Run Text="{Binding Name}"/>
-                                        </TextBlock>
+                                    </TextBlock>
 
-                                        <TextBlock FontSize="18"
+                                    <TextBlock FontSize="18"
                                        Text="{Binding Description}"
                                        TextWrapping="Wrap"
                                        Margin="0 5"/>
 
-                                        <TextBlock FontSize="18">
+                                    <TextBlock FontSize="18">
                                 <Run Text="Производитель: "/>
                                 <Run Text="{Binding Manufacturer}"/>
-                                        </TextBlock>
+                                    </TextBlock>
 
-                                        <TextBlock FontSize="18">
+                                    <TextBlock FontSize="18">
                                 <Run Text="Поставщик: "/>
                                 <Run Text="{Binding Supplier}"/>
-                                        </TextBlock>
+                                    </TextBlock>
 
-                                        <TextBlock FontSize="18">
+                                    <TextBlock FontSize="18">
                                 <Run Text="Цена: "/>
                                 <Run Text="{Binding Price}"/>
                                 <Run Text=" ₽"/>
-                                        </TextBlock>
+                                    </TextBlock>
 
-                                        <TextBlock FontSize="18">
+                                    <TextBlock FontSize="18">
                                 <Run Text="Ед. измерения: "/>
                                 <Run Text="{Binding MessureUnit}"/>
-                                        </TextBlock>
+                                    </TextBlock>
 
-                                        <TextBlock FontSize="18">
+                                    <TextBlock FontSize="18">
                                 <Run Text="На складе: "/>
                                 <Run Text="{Binding Quantity}"/>
-                                        </TextBlock>
-                                    </StackPanel>
+                                    </TextBlock>
+                                </StackPanel>
 
-                                    <!-- Скидка -->
-                                    <Border Grid.Column="2"
+                                <!-- Скидка -->
+                                <Border Grid.Column="2"
                                 BorderThickness="1"
                                 BorderBrush="Black"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Padding="10">
-                                        <TextBlock FontFamily="Times New Roman"
+                                    <TextBlock FontFamily="Times New Roman"
                                        FontSize="18"
                                        TextAlignment="Center">
                                 <Run Text="Действующая скидка"/>
                                 <LineBreak/>
                                 <Run Text="{Binding Discount}"/>
                                 <Run Text="%"/>
-                                        </TextBlock>
-                                    </Border>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+                                    </TextBlock>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
     </Grid>
 </Window>
