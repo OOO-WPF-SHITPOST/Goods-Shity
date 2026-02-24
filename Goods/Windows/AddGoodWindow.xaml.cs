@@ -17,6 +17,7 @@ namespace Goods.Windows
     /// <summary>
     /// Логика взаимодействия для AddGoodWindow.xaml
     /// </summary>
+    /// 
     public partial class AddGoodWindow : Window
     {
         private string? selectedImageFileName;
@@ -38,7 +39,6 @@ namespace Goods.Windows
             SupplierComboBox.ItemsSource = GoodsContext.Instance.Suppliers.ToList();
             MessureUnitComboBox.ItemsSource = GoodsContext.Instance.MessureUnits.ToList();
 
-            // Заглушка
             string placeholder = Path.Combine(resourcesPath, "picture.png");
             if (File.Exists(placeholder))
                 GoodImage.Source = new BitmapImage(new Uri(placeholder, UriKind.Absolute));
@@ -74,32 +74,39 @@ namespace Goods.Windows
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (GoodsContext.Instance.Goods
+            try
+            {
+                if (GoodsContext.Instance.Goods
                 .Any(g => g.Number == NumberTextBox.Text))
-            {
-                MessageBox.Show("Товар с таким артикулом уже существует");
-                return;
+                {
+                    MessageBox.Show("Товар с таким артикулом уже существует");
+                    return;
+                }
+
+                Good good = new Good
+                {
+                    Number = NumberTextBox.Text,
+                    Name = NameTextBox.Text,
+                    CategoryId = (int)CategoryComboBox.SelectedValue,
+                    ManufacturerId = (int)ManufacturerComboBox.SelectedValue,
+                    SupplierId = (int)SupplierComboBox.SelectedValue,
+                    MessureUnitId = (int)MessureUnitComboBox.SelectedValue,
+                    Price = decimal.Parse(PriceTextBox.Text),
+                    Discount = int.Parse(DiscountTextBox.Text),
+                    QuantityInStock = int.Parse(QuantityTextBox.Text),
+                    Description = DescriptionTextBox.Text,
+                    Picture = selectedImageFileName
+                };
+
+                GoodsContext.Instance.Goods.Add(good);
+                GoodsContext.Instance.SaveChanges();
+
+                DialogResult = true;
             }
-
-            Good good = new Good
+            catch
             {
-                Number = NumberTextBox.Text,
-                Name = NameTextBox.Text,
-                CategoryId = (int)CategoryComboBox.SelectedValue,
-                ManufacturerId = (int)ManufacturerComboBox.SelectedValue,
-                SupplierId = (int)SupplierComboBox.SelectedValue,
-                MessureUnitId = (int)MessureUnitComboBox.SelectedValue,
-                Price = decimal.Parse(PriceTextBox.Text),
-                Discount = int.Parse(DiscountTextBox.Text),
-                QuantityInStock = int.Parse(QuantityTextBox.Text),
-                Description = DescriptionTextBox.Text,
-                Picture = selectedImageFileName
-            };
-
-            GoodsContext.Instance.Goods.Add(good);
-            GoodsContext.Instance.SaveChanges();
-
-            DialogResult = true;
+                MessageBox.Show("Ошибка добавления товара");
+            }
         }
     }
 }
